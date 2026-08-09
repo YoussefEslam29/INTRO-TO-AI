@@ -59,6 +59,7 @@ def custom_kmeans(image, k, metric='euclidean', max_iters=50, tol=1e-4):
     label_map = labels.reshape((height, width))
     return label_map
 
+    
 def process_satellite_dataset(k_values=[2, 3, 5]):
    
     valid_extensions = ['.jpg', '.jpeg', '.png']
