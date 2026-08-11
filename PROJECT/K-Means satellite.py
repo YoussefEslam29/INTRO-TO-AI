@@ -49,49 +49,6 @@ def kmeans(data, K, metric='euclidean', max_iters=100):
 
     return clusters, centroids
 
-def plot_clusters(data, clusters, centroids, iteration):
-    data = np.array(data)
-    K = len(centroids)
-    colors = ['red', 'blue', 'green', 'purple', 'orange', 'brown']
-
-    fig = Figure(figsize=(6, 6))
-    ax = fig.add_subplot(111)
-
-    for k in range(K):
-        cluster_points = data[clusters == k]
-        if len(cluster_points) > 0:
-            ax.scatter(cluster_points[:, 0], cluster_points[:, 1],
-                        s=80, c=colors[k % len(colors)], label=f"Cluster {k+1}")
-
-    for k, c in enumerate(centroids):
-        ax.scatter(c[0], c[1], s=200, c='black', marker='X')
-        ax.text(c[0] + 0.1, c[1] + 0.1, f"C{k+1}", fontsize=12)
-
-    ax.set_title(f"K-Means Clustering (Iteration {iteration})")
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.legend()
-    ax.grid(True)
-    
-    return fig
-
-def run_2d_example():
-    data_2d = np.array([
-        [1, 2], [2, 5], [2, 10], [2, 9],
-        [2, 5], [4, 9], [5, 8], [6, 4],
-        [7, 5], [8, 4], [8, 4]
-    ])
-    
-    K = 3
-    print("\n" + "="*60)
-    print("2D K-Means Example (from SEC slides)")
-    print(f"Data points: {len(data_2d)}, K = {K}")
-    print("="*60)
-    
-    clusters, centroids = kmeans(data_2d, K, metric='euclidean')
-    fig = plot_clusters(data_2d, clusters, centroids, iteration="Final")
-    return fig
-
 def generate_slide_figure(image_path, K):
     img = cv2.imread(image_path)
     if img is None:
@@ -285,17 +242,6 @@ class SlideshowApp:
         
         k_test_values = [3, 5]
         
-        self.root.after(0, lambda: self.status_label.config(
-            text="Processing 2D example from SEC slides..."
-        ))
-        
-        fig_2d = run_2d_example()
-        pil_img_2d = fig_to_photoimage(fig_2d)
-        self.slides.append(pil_img_2d)
-        self.slide_titles.append("2D K-Means Example (SEC Slides)")
-        
-        self.root.after(0, self._show_first_slide)
-        
         total = len(dataset_images) * len(k_test_values)
         done = 0
         
@@ -321,12 +267,6 @@ class SlideshowApp:
                     self.slide_titles.append(f"{img_file}  |  K = {K}")
         
         self.root.after(0, self._processing_done)
-    
-    def _show_first_slide(self):
-        self.current_slide = 0
-        self._display_slide()
-        self.prev_btn.config(state=tk.NORMAL)
-        self.next_btn.config(state=tk.NORMAL)
     
     def _processing_done(self):
         self.status_label.config(
