@@ -10,14 +10,14 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import threading
-
+#definations 
 def kmeans(data, K, metric='euclidean', max_iters=100):
-    data = np.array(data, dtype=float)
+    data = np.array(data, dtype=float) #conv to NP
     centroids = data[:K].copy()
 
-    for iteration in range(1, max_iters + 1):
+    for iteration in range(1, max_iters + 1): #terminal
         print(f"\nIteration {iteration}")
-
+        
         if metric == 'euclidean':
             distances = np.linalg.norm(data[:, np.newaxis] - centroids, axis=2)
         elif metric == 'manhattan':
@@ -30,7 +30,7 @@ def kmeans(data, K, metric='euclidean', max_iters=100):
         for k in range(K):
             count = np.sum(clusters == k)
             print(f"Cluster {k+1}: {count} points")
-
+        #update centroids convergence check
         new_centroids = []
         for k in range(K):
             if np.any(clusters == k):
@@ -38,7 +38,7 @@ def kmeans(data, K, metric='euclidean', max_iters=100):
             else:
                 new_centroids.append(centroids[k])
         new_centroids = np.array(new_centroids)
-
+    #last iteration convergence check
         print("New centroids:", new_centroids)
 
         if np.allclose(new_centroids, centroids):
@@ -60,7 +60,7 @@ def generate_slide_figure(image_path, K):
     new_w = 300
     new_h = int(h * (new_w / w))
     img_resized = cv2.resize(img, (new_w, new_h))
-
+    #(h,w,3)to(n,3)
     data = img_resized.reshape((-1, 3))
 
     print(f"\n{'='*60}")
@@ -68,8 +68,8 @@ def generate_slide_figure(image_path, K):
     print(f"Image size: {img_resized.shape[1]}x{img_resized.shape[0]} pixels")
     print(f"Total data points (pixels): {len(data)}")
     print(f"{'='*60}")
-
     print(f"\n--- Running K-Means: K={K}, Metric=Euclidean ---")
+    #n to h,w
     clusters_euc, centroids_euc = kmeans(data, K, metric='euclidean')
     labels_euc = clusters_euc.reshape(img_resized.shape[:2])
 
@@ -79,7 +79,7 @@ def generate_slide_figure(image_path, K):
 
     fig = Figure(figsize=(14, 5), dpi=100)
     fig.patch.set_facecolor('#1a1a2e')
-
+    #create layout
     ax1 = fig.add_subplot(1, 3, 1)
     ax2 = fig.add_subplot(1, 3, 2)
     ax3 = fig.add_subplot(1, 3, 3)
